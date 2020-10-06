@@ -81,7 +81,6 @@ void freeInterDS(intermediateDS *root) {
 
 // emit the <key, value> into intermediate DS
 void emit(char *key, char *value) {
-
 	IDS = insertPairToInterDS(IDS, key, value);
 }
 
@@ -92,8 +91,9 @@ void map(char *chunkData){
 	int i = 0;
 	char* buffer;
 	char value = '1';
+
+	// emit each word from the chunk to the intermediateDS
 	while ((buffer = getWord(chunkData, &i)) != NULL){
-		//printf("map loop\n");
 		emit(buffer, &value);
 	}
 }
@@ -103,13 +103,21 @@ void map(char *chunkData){
 void writeIntermediateDS() {
 	 intermediateDS* temp = IDS;
 	 FILE* fp;
+
+	 // iterate through each key
 	 while (temp -> next != NULL){
 		char* word = temp -> key;
+
+		// builds the filename using the given path and mapID
 		char filename[256] = {};
 		sprintf(filename, "output/MapOut/Map_%d/%s.txt", mapperID, word);
-		//printf("filename %s\n", filename);
 		fp = fopen(filename, "w");
+		if (fp == NULL){
+			printf("error opening file: %s\n", filename);
+		}
 		fprintf(fp, "%s ", temp -> key);
+
+		// iterate through each '1' in the linked list and fprintf
 		while (temp -> value -> next != NULL){
 			fprintf(fp, "%c ", '1');
 			temp -> value = temp -> value -> next;

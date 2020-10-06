@@ -33,16 +33,21 @@ pid_t childpid;
 	for (int i = 0; i < nMappers; i++){
 		if ((childpid = fork()) == 0) {
 			mapID = i + 1;
+
+			// building argument array for exec call
 			char s[256] = { 0 };
 			sprintf(s, "%d", mapID);
 			char* args[] = {"mapper", s, (char*) NULL};
 			execv("mapper", args);
+			// execv only returns if there was an error
+			printf("error with execv() on mapper %d\n", mapID);
 		}
 	}
 
 
 	// To do
 	// wait for all children to complete execution
+	// wait() returns -1 if there are no more children
 	while (wait(NULL) > 0)
 	{}
 
